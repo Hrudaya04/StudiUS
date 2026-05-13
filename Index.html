@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudiUS — AI Career Guidance Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue-400:#60A5FA;--blue-500:#3B82F6;--blue-600:#2563EB;
+  --cyan-400:#22D3EE;--cyan-500:#06B6D4;
+  --emerald-400:#34D399;--emerald-500:#10B981;
+  --violet-400:#A78BFA;--violet-500:#8B5CF6;
+  --amber-400:#FBBF24;--amber-500:#F59E0B;
+  --rose-400:#FB7185;
+  --radius:16px;--radius-sm:10px;
+}
+[data-theme="dark"]{
+  --bg:#07090F;--surface:#0E1320;--surface-2:#131C2E;--surface-3:#182236;
+  --border:rgba(96,165,250,0.12);--border-strong:rgba(96,165,250,0.25);
+  --text:#E8F1FF;--text-2:#7A99C0;--text-3:#364B66;
+  --header-bg:rgba(7,9,15,0.92);
+  --input-bg:#131C2E;
+  --glow:rgba(96,165,250,0.15);
+}
+[data-theme="light"]{
+  --bg:#F0F5FF;--surface:#FFFFFF;--surface-2:#EBF2FF;--surface-3:#E0ECFF;
+  --border:rgba(59,130,246,0.15);--border-strong:rgba(59,130,246,0.3);
+  --text:#0D1829;--text-2:#3D5A80;--text-3:#93AABF;
+  --header-bg:rgba(255,255,255,0.92);
+  --input-bg:#EBF2FF;
+  --glow:rgba(59,130,246,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;overflow-x:hidden}
+
+/* Ambient orbs */
+body::before{content:'';position:fixed;top:-150px;right:-150px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,0.07),transparent 70%);z-index:0;pointer-events:none}
+body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,0.06),transparent 70%);z-index:0;pointer-events:none}
+
+/* PAGE SYSTEM */
+.page{display:none;flex-direction:column;flex:1}
+.page.active{display:flex}
+
+/* ===== LOGIN ===== */
+#loginPage{align-items:center;justify-content:center;min-height:100vh;padding:24px;position:relative;z-index:1}
+.login-card{background:var(--surface);border:0.5px solid var(--border-strong);border-radius:24px;padding:42px 38px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.4),0 0 0 1px var(--border);animation:floatIn .5s cubic-bezier(.22,.68,0,1.2)}
+@keyframes floatIn{from{opacity:0;transform:translateY(28px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.login-logo-mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--blue-500),var(--cyan-400));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(96,165,250,0.35)}
+.login-logo-name{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);letter-spacing:-.3px}
+.login-logo-name span{color:var(--blue-400);font-style:italic}
+
+.login-headline{font-family:'DM Serif Display',serif;font-size:23px;color:var(--text);margin-bottom:6px}
+
+/* Animated rotating tagline */
+.login-tagline-wrap{margin-bottom:26px;min-height:38px;display:flex;align-items:center;justify-content:flex-start}
+.tagline-static{font-size:13px;color:var(--text-3);font-weight:400;margin-right:5px;white-space:nowrap}
+.tagline-dynamic{font-size:13px;font-weight:600;color:var(--blue-400);border-right:2px solid var(--blue-400);padding-right:3px;white-space:nowrap;overflow:hidden;animation:blink-cursor .75s step-end infinite}
+@keyframes blink-cursor{0%,100%{border-color:var(--blue-400)}50%{border-color:transparent}}
+
+.field{margin-bottom:14px}
+.field label{font-size:11.5px;font-weight:600;color:var(--text-2);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:7px}
+.field input,.field select{width:100%;padding:11px 14px;font-size:14px;border-radius:12px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(96,165,250,0.12)}
+.field select option{background:var(--surface)}
+
+.login-btn{width:100%;padding:13px;border-radius:12px;border:none;margin-top:8px;background:linear-gradient(135deg,var(--blue-500),var(--cyan-500));color:white;font-size:15px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .15s,transform .1s;box-shadow:0 4px 18px rgba(59,130,246,0.35)}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:active{transform:translateY(0)}
+.login-error{font-size:12px;color:var(--rose-400);margin-top:10px;text-align:center;min-height:18px}
+.login-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:12px;color:var(--text-3)}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:.5px;background:var(--border)}
+.guest-btn{width:100%;padding:11px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:14px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.guest-btn:hover{border-color:var(--blue-400);color:var(--text)}
+.login-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--text-3)}
+.login-switch a{color:var(--blue-400);cursor:pointer;font-weight:500}
+.login-switch a:hover{text-decoration:underline}
+.theme-float{position:fixed;top:18px;right:18px;z-index:100}
+
+/* ===== HEADER ===== */
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--header-bg);backdrop-filter:blur(16px);border-bottom:0.5px solid var(--border);transition:background .3s;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue-500),var(--cyan-400));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(96,165,250,0.3)}
+.logo-name{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);letter-spacing:-.3px}
+.logo-name span{color:var(--blue-400);font-style:italic}
+.logo-sub{font-size:12px;color:var(--text-3);font-weight:400;margin-left:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-user{font-size:13px;color:var(--text-2);font-weight:500}
+.header-role-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;letter-spacing:.3px}
+.role-student{background:rgba(96,165,250,0.15);color:var(--blue-400);border:0.5px solid rgba(96,165,250,0.3)}
+.role-educator{background:rgba(167,139,250,0.15);color:var(--violet-400);border:0.5px solid rgba(167,139,250,0.3)}
+.role-guest{background:rgba(251,191,36,0.12);color:var(--amber-400);border:0.5px solid rgba(251,191,36,0.25)}
+.theme-toggle{width:34px;height:34px;border-radius:50%;border:0.5px solid var(--border);background:var(--surface-2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-toggle:hover{border-color:var(--blue-400)}
+.logout-btn{font-size:12px;padding:5px 13px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.logout-btn:hover{border-color:var(--rose-400);color:var(--rose-400)}
+
+/* ===== MAIN LAYOUT ===== */
+main{position:relative;z-index:1;flex:1;display:flex;gap:16px;padding:20px;max-width:1200px;margin:0 auto;width:100%;overflow:hidden}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:250px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:calc(100vh - 120px);scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;transition:background .3s,border-color .3s}
+.panel-title{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* Profile panel */
+.profile-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--blue-500),var(--cyan-400));display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px;box-shadow:0 4px 16px rgba(96,165,250,0.3)}
+.profile-name{font-family:'DM Serif Display',serif;font-size:16px;text-align:center;color:var(--text);margin-bottom:3px}
+.profile-role{font-size:12px;color:var(--text-3);text-align:center;margin-bottom:14px}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{background:var(--surface-2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--border)}
+.stat-num{font-family:'DM Serif Display',serif;font-size:20px;color:var(--blue-400)}
+.stat-lbl{font-size:10px;color:var(--text-3);margin-top:2px;font-weight:500}
+
+/* Interest tags */
+.interest-grid{display:flex;flex-wrap:wrap;gap:6px}
+.interest-tag{font-size:11.5px;padding:5px 11px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);cursor:pointer;transition:all .15s;font-weight:500}
+.interest-tag.active{background:rgba(96,165,250,0.15);border-color:var(--blue-400);color:var(--blue-400)}
+
+/* Career match */
+.match-list{display:flex;flex-direction:column;gap:8px}
+.match-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface-2);border-radius:10px;border:0.5px solid var(--border);cursor:pointer;transition:all .15s}
+.match-item:hover{border-color:var(--blue-400);background:rgba(96,165,250,0.06)}
+.match-icon{font-size:18px}
+.match-info{flex:1;min-width:0}
+.match-title{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-pct{font-size:11px;font-weight:700;color:var(--emerald-400)}
+.match-bar-wrap{height:3px;background:var(--surface-3);border-radius:2px;margin-top:4px}
+.match-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--blue-400),var(--emerald-400))}
+
+/* Skills */
+.skill-list{display:flex;flex-direction:column;gap:8px}
+.skill-row{display:flex;flex-direction:column;gap:4px}
+.skill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)}
+.skill-bar-wrap{height:5px;background:var(--surface-3);border-radius:3px}
+.skill-bar{height:5px;border-radius:3px;transition:width .6s ease}
+
+/* Resources */
+.resource-list{display:flex;flex-direction:column;gap:8px}
+.resource-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface-2);border-radius:10px;border:0.5px solid var(--border);cursor:pointer;transition:all .15s;text-decoration:none}
+.resource-item:hover{border-color:var(--cyan-400);background:rgba(34,211,238,0.06)}
+.resource-emoji{font-size:18px}
+.resource-info .resource-name{font-size:12.5px;font-weight:600;color:var(--text)}
+.resource-info .resource-type{font-size:11px;color:var(--text-3)}
+
+/* ===== CHAT AREA ===== */
+.chat-area{flex:1;display:flex;flex-direction:column;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;min-width:0}
+
+/* Tab bar */
+.tab-bar{display:flex;gap:0;border-bottom:0.5px solid var(--border);background:var(--surface-2);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:7px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue-400);border-bottom-color:var(--blue-400);background:var(--surface)}
+.tab-icon{font-size:15px}
+
+/* Tab panels */
+.tab-panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.tab-panel.active{display:flex}
+
+/* ── CHAT TAB ── */
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.msg{display:flex;align-items:flex-end;gap:10px;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.msg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.msg.buddy .msg-av{background:linear-gradient(135deg,var(--blue-500),var(--cyan-400))}
+.msg.user .msg-av{background:linear-gradient(135deg,var(--violet-500),var(--blue-500))}
+.bubble{max-width:72%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.65;word-break:break-word}
+.msg.buddy .bubble{background:var(--surface-2);border:0.5px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+.msg.user .bubble{background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:#fff;border-bottom-right-radius:4px}
+.typing-bubble{background:var(--surface-2);border:0.5px solid var(--border);border-radius:18px;border-bottom-left-radius:4px;padding:14px 18px;display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--text-3);animation:dot-bounce .8s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* Quick prompts */
+.quick-wrap{padding:0 20px 10px;display:flex;flex-wrap:wrap;gap:8px}
+.quick-btn{padding:7px 14px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:12.5px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;font-weight:500}
+.quick-btn:hover{border-color:var(--blue-400);color:var(--blue-400);background:rgba(96,165,250,0.08)}
+
+/* Input bar */
+.input-bar{padding:14px 16px;border-top:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.input-bar textarea{flex:1;padding:11px 14px;border-radius:14px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;resize:none;outline:none;height:44px;max-height:130px;transition:border-color .15s,box-shadow .15s;line-height:1.5}
+.input-bar textarea:focus{border-color:var(--blue-400);box-shadow:0 0 0 3px rgba(96,165,250,0.1)}
+.input-bar textarea::placeholder{color:var(--text-3)}
+.send-btn{width:42px;height:42px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--blue-500),var(--cyan-500));color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s,transform .1s;flex-shrink:0;box-shadow:0 3px 12px rgba(59,130,246,0.35)}
+.send-btn:hover{opacity:.88;transform:scale(1.06)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── ROADMAP TAB ── */
+.roadmap-panel{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.roadmap-header{margin-bottom:24px}
+.roadmap-header h2{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
+.roadmap-header p{font-size:13px;color:var(--text-3);line-height:1.6}
+.career-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.career-pill{padding:7px 16px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:13px;cursor:pointer;font-weight:500;transition:all .15s}
+.career-pill.active{background:rgba(96,165,250,0.15);border-color:var(--blue-400);color:var(--blue-400)}
+.roadmap-steps{display:flex;flex-direction:column;gap:0;position:relative}
+.roadmap-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--blue-400),var(--cyan-400),var(--emerald-400));opacity:0.3;border-radius:2px}
+.step{display:flex;gap:18px;padding:0 0 24px 0;position:relative}
+.step-dot{width:40px;height:40px;border-radius:50%;background:var(--surface-2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text-3);flex-shrink:0;z-index:1;transition:all .3s;cursor:pointer}
+.step.done .step-dot{background:linear-gradient(135deg,var(--blue-500),var(--cyan-500));border-color:var(--blue-400);color:#fff;box-shadow:0 0 16px rgba(96,165,250,0.4)}
+.step.active-step .step-dot{background:var(--surface);border-color:var(--blue-400);color:var(--blue-400);box-shadow:0 0 0 4px rgba(96,165,250,0.12)}
+.step-body{flex:1;padding-top:8px}
+.step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.step.done .step-title{color:var(--text-2);text-decoration:line-through}
+.step-desc{font-size:13px;color:var(--text-3);line-height:1.6}
+.step-resources{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.step-link{font-size:11.5px;padding:4px 10px;border-radius:8px;background:rgba(96,165,250,0.08);border:0.5px solid rgba(96,165,250,0.2);color:var(--blue-400);cursor:pointer;transition:all .15s}
+.step-link:hover{background:rgba(96,165,250,0.15)}
+.roadmap-generate{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.roadmap-generate input{flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .15s}
+.roadmap-generate input:focus{border-color:var(--blue-400)}
+.gen-btn{padding:10px 18px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--blue-500),var(--cyan-500));color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;transition:opacity .15s}
+.gen-btn:hover{opacity:.88}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-roadmap-result{background:var(--surface-2);border:0.5px solid var(--border-strong);border-radius:14px;padding:20px;margin-top:16px;font-size:13.5px;line-height:1.8;color:var(--text);white-space:pre-wrap}
+
+/* ── QUIZ TAB ── */
+.quiz-panel{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.quiz-intro{text-align:center;padding:40px 20px}
+.quiz-intro h2{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);margin-bottom:10px}
+.quiz-intro p{font-size:14px;color:var(--text-3);line-height:1.7;max-width:440px;margin:0 auto 28px}
+.start-quiz-btn{padding:13px 32px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--violet-500),var(--blue-500));color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 18px rgba(139,92,246,0.35);transition:opacity .15s,transform .1s}
+.start-quiz-btn:hover{opacity:.9;transform:translateY(-2px)}
+.quiz-progress-bar-wrap{height:5px;background:var(--surface-3);border-radius:3px;margin-bottom:28px}
+.quiz-progress-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--violet-500),var(--blue-400));transition:width .4s ease}
+.quiz-q-num{font-size:12px;font-weight:600;color:var(--text-3);letter-spacing:.4px;margin-bottom:10px}
+.quiz-question{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:24px;line-height:1.4}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{padding:13px 18px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text);font-size:14px;cursor:pointer;transition:all .15s;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500}
+.quiz-option:hover{border-color:var(--blue-400);background:rgba(96,165,250,0.08);color:var(--blue-400)}
+.quiz-option.selected{border-color:var(--violet-400);background:rgba(167,139,250,0.12);color:var(--violet-400)}
+.quiz-nav{display:flex;justify-content:space-between;margin-top:24px;gap:10px}
+.quiz-nav-btn{padding:10px 22px;border-radius:10px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.quiz-nav-btn.primary{background:linear-gradient(135deg,var(--violet-500),var(--blue-500));border:none;color:#fff;box-shadow:0 3px 12px rgba(139,92,246,0.3)}
+.quiz-nav-btn:hover{opacity:.88}
+.quiz-result{text-align:center;padding:30px 20px}
+.result-emoji{font-size:60px;margin-bottom:16px}
+.result-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);margin-bottom:10px}
+.result-desc{font-size:14px;color:var(--text-3);line-height:1.7;max-width:460px;margin:0 auto 28px}
+.result-careers{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:24px}
+.result-career-card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:14px;text-align:center;transition:all .15s;cursor:pointer}
+.result-career-card:hover{border-color:var(--blue-400);transform:translateY(-2px)}
+.result-career-icon{font-size:28px;margin-bottom:8px}
+.result-career-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.result-career-field{font-size:11.5px;color:var(--text-3)}
+.retake-btn{padding:11px 28px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s}
+.retake-btn:hover{border-color:var(--blue-400);color:var(--blue-400)}
+
+/* ── EDUCATOR TAB ── */
+.edu-panel{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.edu-header{margin-bottom:24px}
+.edu-header h2{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
+.edu-header p{font-size:13px;color:var(--text-3)}
+.edu-tools{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.edu-tool-card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s}
+.edu-tool-card:hover{border-color:var(--blue-400);transform:translateY(-2px);box-shadow:0 8px 24px rgba(96,165,250,0.1)}
+.edu-tool-icon{font-size:28px;margin-bottom:10px}
+.edu-tool-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.edu-tool-desc{font-size:12px;color:var(--text-3);line-height:1.5}
+.edu-ai-section{background:var(--surface-2);border:0.5px solid var(--border);border-radius:14px;padding:20px}
+.edu-ai-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.edu-ai-controls{display:flex;flex-direction:column;gap:10px}
+.edu-select{width:100%;padding:10px 14px;border-radius:10px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;cursor:pointer}
+.edu-select:focus{border-color:var(--blue-400)}
+.edu-input{width:100%;padding:10px 14px;border-radius:10px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;resize:none;height:80px;line-height:1.5}
+.edu-input:focus{border-color:var(--blue-400)}
+.edu-gen-btn{padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--violet-500),var(--blue-500));color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .15s;align-self:flex-start}
+.edu-gen-btn:hover{opacity:.88}
+.edu-gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.edu-result{background:var(--surface);border:0.5px solid var(--border-strong);border-radius:12px;padding:18px;margin-top:14px;font-size:13.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;display:none}
+.edu-result.visible{display:block}
+
+/* ── NOTES TAB ── */
+.notes-panel{flex:1;display:flex;flex-direction:column;padding:20px;gap:14px}
+.notes-top{display:flex;gap:10px;align-items:center}
+.notes-top input{flex:1;padding:10px 14px;border-radius:10px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;outline:none}
+.notes-top input:focus{border-color:var(--blue-400)}
+.notes-save-btn{padding:10px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--emerald-500),var(--cyan-500));color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap}
+.notes-save-btn:hover{opacity:.88}
+.notes-area{flex:1;padding:14px;border-radius:12px;border:0.5px solid var(--border);background:var(--input-bg);color:var(--text);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;resize:none;line-height:1.7;min-height:160px}
+.notes-area:focus{border-color:var(--blue-400)}
+.notes-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:200px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.note-item{background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:all .15s}
+.note-item:hover{border-color:var(--blue-400)}
+.note-item-body{flex:1;min-width:0}
+.note-item-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-item-preview{font-size:12px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-item-date{font-size:11px;color:var(--text-3)}
+.note-del{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:15px;padding:0;transition:color .15s}
+.note-del:hover{color:var(--rose-400)}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:0.5px solid var(--border-strong);border-radius:12px;padding:12px 22px;font-size:13.5px;color:var(--text);box-shadow:0 12px 32px rgba(0,0,0,0.4);z-index:1000;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Section title badge */
+.section-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:6px}
+.badge-ai{background:rgba(96,165,250,0.12);color:var(--blue-400);border:0.5px solid rgba(96,165,250,0.25)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* Responsive */
+@media(max-width:900px){
+  main{flex-direction:column;overflow-y:auto;max-height:none}
+  .sidebar{width:100%;max-height:none;flex-direction:row;flex-wrap:wrap}
+  .sidebar .panel{min-width:220px;flex:1}
+}
+@media(max-width:600px){
+  .edu-tools{grid-template-columns:1fr}
+  .tab{padding:10px 12px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== LOGIN PAGE ====== -->
+<div class="page active" id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">🎓</div>
+      <div class="login-logo-name">Studi<span>US</span></div>
+    </div>
+    <div class="login-mode-label" id="loginModeLabel">Welcome back</div>
+    <div class="login-tagline-wrap">
+      <span class="tagline-static">Your future in</span>
+      <span class="tagline-dynamic" id="taglineDynamic"></span>
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="emailInput" placeholder="you@example.com" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="passInput" placeholder="••••••••" />
+    </div>
+    <div class="field" id="confirmField" style="display:none">
+      <label>Confirm Password</label>
+      <input type="password" id="confirmInput" placeholder="••••••••" />
+    </div>
+    <div class="field" id="roleField" style="display:none">
+      <label>I am a</label>
+      <select id="roleInput">
+        <option value="student">🎒 Student</option>
+        <option value="educator">📚 Educator / Counselor</option>
+      </select>
+    </div>
+
+    <button class="login-btn" onclick="handleAuth()">
+      <span id="loginBtnText">Sign In</span>
+    </button>
+    <div class="login-error" id="loginError"></div>
+
+    <div class="login-divider">or</div>
+    <button class="guest-btn" onclick="loginAsGuest()">Continue as Guest 👤</button>
+
+    <div class="login-switch" id="loginSwitch">
+      Don't have an account? <a onclick="toggleMode()">Sign up</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== APP PAGE ====== -->
+<div class="page" id="appPage">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">🎓</div>
+      <div>
+        <div class="logo-name">Studi<span>US</span> <span class="logo-sub">AI Career Guidance</span></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-role-badge" id="headerRoleBadge"></span>
+      <span class="header-user" id="headerUser"></span>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+
+      <!-- Profile -->
+      <div class="panel">
+        <div class="panel-title">👤 Profile</div>
+        <div class="profile-avatar" id="profileAvatar">🎒</div>
+        <div class="profile-name" id="profileName">Student</div>
+        <div class="profile-role" id="profileRoleLabel">Career Explorer</div>
+        <div class="profile-stats">
+          <div class="stat-box">
+            <div class="stat-num" id="statChats">0</div>
+            <div class="stat-lbl">Chats</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="statNotes">0</div>
+            <div class="stat-lbl">Notes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="panel">
+        <div class="panel-title">🌟 My Interests</div>
+        <div class="interest-grid" id="interestGrid"></div>
+      </div>
+
+      <!-- Career Matches -->
+      <div class="panel">
+        <div class="panel-title">🎯 Top Career Matches</div>
+        <div class="match-list" id="matchList"></div>
+      </div>
+
+      <!-- Skills -->
+      <div class="panel">
+        <div class="panel-title">💡 Skill Snapshot</div>
+        <div class="skill-list" id="skillList"></div>
+      </div>
+
+      <!-- Resources -->
+      <div class="panel">
+        <div class="panel-title">📚 Quick Resources</div>
+        <div class="resource-list">
+          <div class="resource-item" onclick="showToast('Opening Coursera...')">
+            <div class="resource-emoji">🎓</div>
+            <div class="resource-info">
+              <div class="resource-name">Coursera</div>
+              <div class="resource-type">Online Courses</div>
+            </div>
+          </div>
+          <div class="resource-item" onclick="showToast('Opening LinkedIn Learning...')">
+            <div class="resource-emoji">💼</div>
+            <div class="resource-info">
+              <div class="resource-name">LinkedIn Learning</div>
+              <div class="resource-type">Professional Skills</div>
+            </div>
+          </div>
+          <div class="resource-item" onclick="showToast('Opening Khan Academy...')">
+            <div class="resource-emoji">📖</div>
+            <div class="resource-info">
+              <div class="resource-name">Khan Academy</div>
+              <div class="resource-type">Free Learning</div>
+            </div>
+          </div>
+          <div class="resource-item" onclick="showToast('Opening GitHub...')">
+            <div class="resource-emoji">💻</div>
+            <div class="resource-info">
+              <div class="resource-name">GitHub</div>
+              <div class="resource-type">Portfolio Building</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== CHAT / TABS AREA ===== -->
+    <div class="chat-area">
+      <div class="tab-bar" id="tabBar">
+        <div class="tab active" onclick="switchTab('chat')" data-tab="chat">
+          <span class="tab-icon">💬</span> AI Advisor
+        </div>
+        <div class="tab" onclick="switchTab('roadmap')" data-tab="roadmap">
+          <span class="tab-icon">🗺️</span> Roadmap
+        </div>
+        <div class="tab" onclick="switchTab('quiz')" data-tab="quiz">
+          <span class="tab-icon">🧠</span> Career Quiz
+        </div>
+        <div class="tab educator-tab" onclick="switchTab('educator')" data-tab="educator" style="display:none">
+          <span class="tab-icon">📋</span> Educator Tools
+        </div>
+        <div class="tab" onclick="switchTab('notes')" data-tab="notes">
+          <span class="tab-icon">📝</span> My Notes
+        </div>
+      </div>
+
+      <!-- ── CHAT TAB ── -->
+      <div class="tab-panel active" id="tab-chat">
+        <div class="messages" id="messages"></div>
+        <div class="quick-wrap" id="quickBtns">
+          <button class="quick-btn" onclick="quickSend('What career suits me if I love technology and creativity?')">💡 Tech + Creative</button>
+          <button class="quick-btn" onclick="quickSend('What skills do I need to become a data scientist?')">📊 Data Scientist</button>
+          <button class="quick-btn" onclick="quickSend('How do I build a strong portfolio as a student?')">🗂️ Build Portfolio</button>
+          <button class="quick-btn" onclick="quickSend('What are the highest paying careers in India in 2025?')">💰 Top Salaries</button>
+          <button class="quick-btn" onclick="quickSend('Should I pursue higher education or start working after graduation?')">🎓 Study vs Work</button>
+          <button class="quick-btn" onclick="quickSend('How can I prepare for campus placements?')">🏢 Placements</button>
+        </div>
+        <div class="input-bar">
+          <textarea id="msgInput" placeholder="Ask your AI career advisor anything…" rows="1"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+
+      <!-- ── ROADMAP TAB ── -->
+      <div class="tab-panel" id="tab-roadmap">
+        <div class="roadmap-panel">
+          <div class="roadmap-header">
+            <h2>🗺️ Career Roadmaps</h2>
+            <p>Choose a career path to see a step-by-step guide, or generate a custom one with AI.</p>
+          </div>
+
+          <div class="roadmap-generate">
+            <input type="text" id="roadmapInput" placeholder="e.g. I want to become a UX Designer…" />
+            <button class="gen-btn" id="genRoadmapBtn" onclick="generateRoadmap()">✨ Generate with AI</button>
+          </div>
+
+          <div class="career-selector" id="careerSelector"></div>
+
+          <div class="roadmap-steps" id="roadmapSteps"></div>
+          <div class="ai-roadmap-result" id="aiRoadmapResult"></div>
+        </div>
+      </div>
+
+      <!-- ── QUIZ TAB ── -->
+      <div class="tab-panel" id="tab-quiz">
+        <div class="quiz-panel" id="quizPanel">
+
+          <div id="quizIntro">
+            <div class="quiz-intro">
+              <div style="font-size:56px;margin-bottom:16px">🧠</div>
+              <h2>Discover Your Career DNA</h2>
+              <p>Answer 8 quick questions and our AI will map your personality, strengths, and interests to the most suitable careers for you.</p>
+              <button class="start-quiz-btn" onclick="startQuiz()">Start the Quiz →</button>
+            </div>
+          </div>
+
+          <div id="quizContent" style="display:none">
+            <div class="quiz-progress-bar-wrap">
+              <div class="quiz-progress-bar" id="quizProgressBar" style="width:0%"></div>
+            </div>
+            <div class="quiz-q-num" id="quizQNum">Question 1 of 8</div>
+            <div class="quiz-question" id="quizQuestion"></div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="quiz-nav">
+              <button class="quiz-nav-btn" onclick="prevQ()" id="prevQBtn">← Back</button>
+              <button class="quiz-nav-btn primary" onclick="nextQ()" id="nextQBtn">Next →</button>
+            </div>
+          </div>
+
+          <div id="quizResult" style="display:none">
+            <div class="quiz-result">
+              <div class="result-emoji" id="resultEmoji">🌟</div>
+              <div class="result-title" id="resultTitle">Your Result</div>
+              <div class="result-desc" id="resultDesc"></div>
+              <div class="result-careers" id="resultCareers"></div>
+              <button class="retake-btn" onclick="retakeQuiz()">↺ Retake Quiz</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── EDUCATOR TAB ── -->
+      <div class="tab-panel" id="tab-educator">
+        <div class="edu-panel">
+          <div class="edu-header">
+            <h2>📋 Educator Tools</h2>
+            <p>AI-powered tools to help you guide, assess, and inspire your students.</p>
+          </div>
+
+          <div class="edu-tools">
+            <div class="edu-tool-card" onclick="setEduTool('lesson')">
+              <div class="edu-tool-icon">📖</div>
+              <div class="edu-tool-title">Lesson Planner</div>
+              <div class="edu-tool-desc">Generate career-oriented lesson plans for any subject or grade.</div>
+            </div>
+            <div class="edu-tool-card" onclick="setEduTool('assessment')">
+              <div class="edu-tool-icon">📝</div>
+              <div class="edu-tool-title">Assessment Generator</div>
+              <div class="edu-tool-desc">Create quizzes and assessments to evaluate career readiness.</div>
+            </div>
+            <div class="edu-tool-card" onclick="setEduTool('report')">
+              <div class="edu-tool-icon">📊</div>
+              <div class="edu-tool-title">Student Report</div>
+              <div class="edu-tool-desc">Generate personalized career-readiness reports for students.</div>
+            </div>
+            <div class="edu-tool-card" onclick="setEduTool('advice')">
+              <div class="edu-tool-icon">💬</div>
+              <div class="edu-tool-title">Counseling Script</div>
+              <div class="edu-tool-desc">Get AI-generated counseling scripts for 1-on-1 student sessions.</div>
+            </div>
+          </div>
+
+          <div class="edu-ai-section">
+            <div class="edu-ai-title">
+              ✨ AI Generator
+              <span class="section-badge badge-ai">Powered by Claude</span>
+            </div>
+            <div class="edu-ai-controls">
+              <select class="edu-select" id="eduToolSelect">
+                <option value="lesson">📖 Lesson Plan</option>
+                <option value="assessment">📝 Assessment / Quiz</option>
+                <option value="report">📊 Student Career Report</option>
+                <option value="advice">💬 Counseling Script</option>
+              </select>
+              <textarea class="edu-input" id="eduInput" placeholder="Describe what you need… e.g. 'A lesson plan for Grade 10 students about careers in technology'"></textarea>
+              <button class="edu-gen-btn" id="eduGenBtn" onclick="generateEduContent()">✨ Generate</button>
+            </div>
+            <div class="edu-result" id="eduResult"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NOTES TAB ── -->
+      <div class="tab-panel" id="tab-notes">
+        <div class="notes-panel">
+          <div class="notes-top">
+            <input type="text" id="noteTitleInput" placeholder="Note title…" />
+            <button class="notes-save-btn" onclick="saveNote()">💾 Save Note</button>
+          </div>
+          <textarea class="notes-area" id="noteArea" placeholder="Write your career goals, action items, insights…"></textarea>
+          <div style="font-size:12px;color:var(--text-3);font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-top:4px">Saved Notes</div>
+          <div class="notes-list" id="notesList"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==============================
+// THEME
+// ==============================
+let currentTheme = 'dark';
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.querySelectorAll('.theme-toggle').forEach(b => b.textContent = currentTheme === 'dark' ? '🌙' : '☀️');
+}
+
+// ==============================
+// AUTH
+// ==============================
+let currentUser = null, currentRole = 'student', isSignup = false;
+
+function toggleMode() {
+  isSignup = !isSignup;
+  document.getElementById('loginModeLabel').textContent = isSignup ? 'Create account' : 'Welcome back';
+  document.getElementById('loginTagline').textContent = isSignup
+    ? 'Join StudiUS and start your AI-powered career journey today.'
+    : 'Your AI-powered career guidance platform. Discover your path, build your future.';
+  document.getElementById('loginBtnText').textContent = isSignup ? 'Create Account' : 'Sign In';
+  document.getElementById('confirmField').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('roleField').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('loginSwitch').innerHTML = isSignup
+    ? 'Already have an account? <a onclick="toggleMode()">Sign in</a>'
+    : "Don't have an account? <a onclick=\"toggleMode()\">Sign up</a>";
+  document.getElementById('loginError').textContent = '';
+}
+
+function handleAuth() {
+  const email = document.getElementById('emailInput').value.trim();
+  const pass = document.getElementById('passInput').value;
+  const confirm = document.getElementById('confirmInput').value;
+  const role = document.getElementById('roleInput').value;
+
+  if (!email || !pass) { document.getElementById('loginError').textContent = 'Please fill in all fields.'; return; }
+  if (isSignup && pass !== confirm) { document.getElementById('loginError').textContent = 'Passwords do not match.'; return; }
+  if (pass.length < 6) { document.getElementById('loginError').textContent = 'Password must be at least 6 characters.'; return; }
+
+  enterApp(email, isSignup ? role : 'student');
+}
+
+function loginAsGuest() { enterApp('Guest', 'student'); }
+
+function enterApp(user, role) {
+  currentUser = user;
+  currentRole = role;
+  const isGuest = user === 'Guest';
+  const name = isGuest ? 'Guest' : user.split('@')[0];
+
+  document.getElementById('headerUser').textContent = '👤 ' + (isGuest ? 'Guest' : name);
+  document.getElementById('headerRoleBadge').textContent = isGuest ? 'Guest' : (role === 'educator' ? '📚 Educator' : '🎒 Student');
+  document.getElementById('headerRoleBadge').className = 'header-role-badge ' + (isGuest ? 'role-guest' : role === 'educator' ? 'role-educator' : 'role-student');
+
+  document.getElementById('loginPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+
+  // Show educator tab if role is educator
+  document.querySelectorAll('.educator-tab').forEach(t => t.style.display = role === 'educator' ? 'flex' : 'none');
+
+  initApp(name, role);
+}
+
+function logout() {
+  currentUser = null; chatHistory = []; notes = [];
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('appPage').classList.remove('active');
+  document.getElementById('loginPage').classList.add('active');
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('emailInput').value = '';
+  document.getElementById('passInput').value = '';
+  document.getElementById('confirmInput').value = '';
+  if (isSignup) toggleMode();
+}
+
+// Keyboard shortcuts for login
+document.getElementById('emailInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('passInput').focus(); });
+document.getElementById('passInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
+document.getElementById('confirmInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
+
+// ==============================
+// INIT APP
+// ==============================
+const INTERESTS_LIST = ['💻 Technology', '🎨 Design', '💼 Business', '🔬 Science', '🏥 Healthcare', '⚖️ Law', '🎓 Education', '🔧 Engineering', '📡 Media', '💰 Finance'];
+const SKILLS_DATA = [
+  { name: 'Problem Solving', pct: 82, color: '#60A5FA' },
+  { name: 'Communication', pct: 68, color: '#34D399' },
+  { name: 'Creativity', pct: 74, color: '#A78BFA' },
+  { name: 'Leadership', pct: 55, color: '#FBBF24' },
+];
+const CAREERS_MAP = {
+  '💻 Technology': [{ icon: '⚙️', name: 'Software Engineer', pct: 95 }, { icon: '📊', name: 'Data Scientist', pct: 88 }, { icon: '🔒', name: 'Cybersecurity', pct: 80 }],
+  '🎨 Design': [{ icon: '🎨', name: 'UX/UI Designer', pct: 93 }, { icon: '🖼️', name: 'Graphic Designer', pct: 85 }, { icon: '🎬', name: 'Creative Director', pct: 78 }],
+  '💼 Business': [{ icon: '🚀', name: 'Entrepreneur', pct: 90 }, { icon: '📈', name: 'Marketing Manager', pct: 84 }, { icon: '🤝', name: 'Consultant', pct: 79 }],
+  '🔬 Science': [{ icon: '🔭', name: 'Research Scientist', pct: 91 }, { icon: '🌿', name: 'Environmental Scientist', pct: 83 }, { icon: '🧬', name: 'Biologist', pct: 77 }],
+  '🏥 Healthcare': [{ icon: '👨‍⚕️', name: 'Doctor', pct: 94 }, { icon: '💊', name: 'Pharmacist', pct: 87 }, { icon: '🧠', name: 'Medical Researcher', pct: 81 }],
+  '⚖️ Law': [{ icon: '⚖️', name: 'Lawyer', pct: 92 }, { icon: '🏛️', name: 'Policy Analyst', pct: 85 }, { icon: '📋', name: 'Compliance Officer', pct: 76 }],
+  '🎓 Education': [{ icon: '👩‍🏫', name: 'Teacher', pct: 89 }, { icon: '📚', name: 'Curriculum Designer', pct: 83 }, { icon: '🎤', name: 'Instructional Designer', pct: 75 }],
+  '🔧 Engineering': [{ icon: '🏗️', name: 'Civil Engineer', pct: 90 }, { icon: '🤖', name: 'Robotics Engineer', pct: 86 }, { icon: '✈️', name: 'Aerospace Engineer', pct: 82 }],
+  '📡 Media': [{ icon: '📰', name: 'Journalist', pct: 88 }, { icon: '🎥', name: 'Film Director', pct: 82 }, { icon: '📱', name: 'Content Creator', pct: 79 }],
+  '💰 Finance': [{ icon: '📊', name: 'Financial Analyst', pct: 92 }, { icon: '🏦', name: 'Investment Banker', pct: 86 }, { icon: '📉', name: 'Actuary', pct: 80 }],
+};
+
+const ROADMAPS_DATA = {
+  'Software Engineer': { steps: [
+    { title: 'Learn Programming Basics', desc: 'Master Python or JavaScript fundamentals — variables, loops, functions, OOP.', links: ['freeCodeCamp', 'CS50', 'Python.org'], done: false },
+    { title: 'Build Projects on GitHub', desc: 'Create 3–5 real projects and host them on GitHub to show employers.', links: ['GitHub', 'GitLab'], done: false },
+    { title: 'Data Structures & Algorithms', desc: 'Study DSA for coding interviews — arrays, trees, graphs, dynamic programming.', links: ['LeetCode', 'HackerRank'], done: false },
+    { title: 'Learn a Framework', desc: 'Pick React (frontend), Node.js (backend), or Django (Python web) and master it.', links: ['React Docs', 'Node.js Docs'], done: false },
+    { title: 'Open Source & Internships', desc: 'Contribute to open source projects and apply for internships to get real experience.', links: ['GSoC', 'Internshala'], done: false },
+    { title: 'Full-time Job / Startup', desc: 'Apply for junior developer roles, join a startup, or launch your own product.', links: ['LinkedIn', 'AngelList'], done: false },
+  ]},
+  'Data Scientist': { steps: [
+    { title: 'Math & Statistics Foundation', desc: 'Learn probability, linear algebra, and statistics — the core of data science.', links: ['Khan Academy', '3Blue1Brown'], done: false },
+    { title: 'Python for Data Science', desc: 'Master NumPy, Pandas, Matplotlib for data manipulation and visualization.', links: ['Kaggle', 'Coursera'], done: false },
+    { title: 'Machine Learning', desc: 'Learn ML algorithms using scikit-learn — regression, classification, clustering.', links: ['Fast.ai', 'ML Course'], done: false },
+    { title: 'Kaggle Competitions', desc: 'Participate in Kaggle competitions to apply skills and build a public profile.', links: ['Kaggle.com'], done: false },
+    { title: 'Build a Portfolio', desc: 'Create 3–4 end-to-end projects with notebooks, visuals, and insights.', links: ['GitHub', 'Jupyter'], done: false },
+    { title: 'Get Certified & Apply', desc: 'Earn a Google or AWS ML certificate and apply for data analyst / DS roles.', links: ['Google Cert', 'AWS ML'], done: false },
+  ]},
+  'UX/UI Designer': { steps: [
+    { title: 'Design Principles', desc: 'Learn color theory, typography, layout, visual hierarchy, and design thinking.', links: ['Canva Learn', 'NNGroup'], done: false },
+    { title: 'Master Figma', desc: 'Become proficient in Figma — wireframes, prototypes, components, design systems.', links: ['Figma Academy', 'YouTube'], done: false },
+    { title: 'UX Research', desc: 'Learn user research, interviews, usability testing, and personas.', links: ['Nielsen Norman', 'UX Mastery'], done: false },
+    { title: 'Build Case Studies', desc: 'Create 4–5 design case studies showing your process from research to final design.', links: ['Behance', 'Dribbble'], done: false },
+    { title: 'Freelance Projects', desc: 'Take small freelance clients to get real-world feedback and build your portfolio.', links: ['Fiverr', 'Upwork'], done: false },
+    { title: 'Join a Product Team', desc: 'Apply to product companies, startups, or design agencies as a junior UX designer.', links: ['LinkedIn', 'Wellfound'], done: false },
+  ]},
+};
+
+let selectedInterests = ['💻 Technology'];
+let notes = [];
+let chatCount = 0;
+
+function initApp(name, role) {
+  // Profile
+  document.getElementById('profileName').textContent = name === 'Guest' ? 'Guest User' : name;
+  document.getElementById('profileRoleLabel').textContent = role === 'educator' ? '📚 Educator / Counselor' : '🎒 Career Explorer';
+  document.getElementById('profileAvatar').textContent = role === 'educator' ? '📚' : '🎒';
+  updateStats();
+
+  // Interests
+  renderInterests();
+  // Career matches
+  renderMatches();
+  // Skills
+  renderSkills();
+  // Roadmap
+  renderCareerSelector();
+  selectCareer('Software Engineer');
+  // Notes
+  loadNotes();
+  // Chat
+  chatHistory = [];
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('quickBtns').style.display = 'flex';
+  const greeting = name === 'Guest' ? 'there' : name;
+  addMsg('buddy', `Hi ${greeting}! 🎓 I'm your StudiUS AI Advisor. I'm here to help you explore careers, discover your strengths, and plan your future — one step at a time. What would you like to explore today?`);
+  switchTab('chat');
+}
+
+function updateStats() {
+  document.getElementById('statChats').textContent = chatCount;
+  document.getElementById('statNotes').textContent = notes.length;
+}
+
+function renderInterests() {
+  const grid = document.getElementById('interestGrid');
+  grid.innerHTML = '';
+  INTERESTS_LIST.forEach(i => {
+    const tag = document.createElement('div');
+    tag.className = 'interest-tag' + (selectedInterests.includes(i) ? ' active' : '');
+    tag.textContent = i;
+    tag.onclick = () => {
+      if (selectedInterests.includes(i)) {
+        if (selectedInterests.length === 1) return;
+        selectedInterests = selectedInterests.filter(x => x !== i);
+      } else {
+        selectedInterests.push(i);
+      }
+      renderInterests();
+      renderMatches();
+    };
+    grid.appendChild(tag);
+  });
+}
+
+function renderMatches() {
+  const list = document.getElementById('matchList');
+  list.innerHTML = '';
+  const careers = CAREERS_MAP[selectedInterests[selectedInterests.length - 1]] || [];
+  careers.forEach(c => {
+    list.innerHTML += `
+      <div class="match-item" onclick="selectCareer('${c.name}');switchTab('roadmap')">
+        <div class="match-icon">${c.icon}</div>
+        <div class="match-info">
+          <div class="match-title">${c.name}</div>
+          <div class="match-bar-wrap"><div class="match-bar" style="width:${c.pct}%"></div></div>
+        </div>
+        <div class="match-pct">${c.pct}%</div>
+      </div>`;
+  });
+}
+
+function renderSkills() {
+  const list = document.getElementById('skillList');
+  list.innerHTML = '';
+  SKILLS_DATA.forEach(s => {
+    list.innerHTML += `
+      <div class="skill-row">
+        <div class="skill-label"><span>${s.name}</span><span style="color:${s.color};font-weight:700">${s.pct}%</span></div>
+        <div class="skill-bar-wrap"><div class="skill-bar" style="width:${s.pct}%;background:${s.color}"></div></div>
+      </div>`;
+  });
+}
+
+// ==============================
+// TABS
+// ==============================
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+// ==============================
+// CHAT
+// ==============================
+const AI_SYSTEM = `You are StudiUS AI, an expert and empathetic career guidance advisor for students. Your role is to:
+- Help students discover the right career path based on their interests, strengths, and aspirations
+- Provide clear, actionable advice about courses, skills, certifications, and job market insights
+- Give guidance about higher education, entrance exams, internships, and campus placements
+- Be encouraging and realistic — help students set achievable goals and timelines
+- Keep responses concise and structured — 3-5 sentences or use clear bullet points when listing steps
+- Be especially helpful for students in India — mention relevant exams (JEE, NEET, CAT, GATE), colleges (IITs, NITs, IIMs), and job markets
+- Educators can use you for lesson planning, student assessment, and counseling guidance`;
+
+let chatHistory = [], chatBusy = false;
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + (role === 'user' ? 'user' : 'buddy');
+  if (role !== 'user') {
+    const av = document.createElement('div');
+    av.className = 'msg-av';
+    av.textContent = '🎓';
+    wrap.appendChild(av);
+  } else {
+    const av = document.createElement('div');
+    av.className = 'msg-av';
+    av.textContent = '👤';
+    wrap.appendChild(av);
+  }
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  b.textContent = text;
+  wrap.appendChild(b);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg buddy'; wrap.id = 'typing';
+  const av = document.createElement('div'); av.className = 'msg-av'; av.textContent = '🎓';
+  wrap.appendChild(av);
+  const b = document.createElement('div'); b.className = 'typing-bubble';
+  b.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  wrap.appendChild(b);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+async function sendMessage() {
+  if (chatBusy) return;
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = '44px';
+  document.getElementById('quickBtns').style.display = 'none';
+  addMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  chatBusy = true;
+  document.getElementById('sendBtn').disabled = true;
+  showTyping();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: AI_SYSTEM,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.find(b => b.type === 'text')?.text || "I'm here to help! Could you tell me more about your interests and what kind of career guidance you're looking for?";
+    hideTyping();
+    addMsg('buddy', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+    chatCount++;
+    updateStats();
+  } catch (e) {
+    hideTyping();
+    addMsg('buddy', "There was a small hiccup connecting to the AI. Please check your connection and try again!");
+  }
+  chatBusy = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+function quickSend(text) {
+  document.getElementById('msgInput').value = text;
+  sendMessage();
+}
+
+document.getElementById('msgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+document.getElementById('msgInput').addEventListener('input', function () {
+  this.style.height = '44px';
+  this.style.height = Math.min(this.scrollHeight, 130) + 'px';
+});
+
+// ==============================
+// ROADMAP
+// ==============================
+let selectedCareer = 'Software Engineer';
+let stepsDone = {};
+
+function renderCareerSelector() {
+  const sel = document.getElementById('careerSelector');
+  sel.innerHTML = '';
+  Object.keys(ROADMAPS_DATA).forEach(c => {
+    const pill = document.createElement('div');
+    pill.className = 'career-pill' + (c === selectedCareer ? ' active' : '');
+    pill.textContent = c;
+    pill.onclick = () => selectCareer(c);
+    sel.appendChild(pill);
+  });
+}
+
+function selectCareer(name) {
+  selectedCareer = name;
+  document.querySelectorAll('.career-pill').forEach(p => p.classList.toggle('active', p.textContent === name));
+  const data = ROADMAPS_DATA[name];
+  if (!data) return;
+  const steps = document.getElementById('roadmapSteps');
+  steps.innerHTML = '';
+  document.getElementById('aiRoadmapResult').textContent = '';
+  data.steps.forEach((s, i) => {
+    const isDone = stepsDone[name + i] || false;
+    steps.innerHTML += `
+      <div class="step ${isDone ? 'done' : i === 0 ? 'active-step' : ''}" id="step-${i}">
+        <div class="step-dot" onclick="toggleStep(${i},'${name}')">${isDone ? '✓' : i + 1}</div>
+        <div class="step-body">
+          <div class="step-title">${s.title}</div>
+          <div class="step-desc">${s.desc}</div>
+          <div class="step-resources">
+            ${s.links.map(l => `<span class="step-link">🔗 ${l}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function toggleStep(i, career) {
+  const key = career + i;
+  stepsDone[key] = !stepsDone[key];
+  selectCareer(career);
+  showToast(stepsDone[key] ? '✅ Step marked as done!' : 'Step unmarked');
+}
+
+async function generateRoadmap() {
+  const input = document.getElementById('roadmapInput').value.trim();
+  if (!input) { showToast('Please describe your career goal first!'); return; }
+  const btn = document.getElementById('genRoadmapBtn');
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+  const result = document.getElementById('aiRoadmapResult');
+  result.textContent = '';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: `Create a clear, step-by-step career roadmap for: "${input}". List 6-8 actionable steps with brief descriptions. Format each step as: Step N: [Title] — [2-sentence description]. Be practical and specific.` }]
+      })
+    });
+    const data = await res.json();
+    result.textContent = data.content?.find(b => b.type === 'text')?.text || 'Could not generate roadmap. Try again.';
+    document.getElementById('roadmapSteps').innerHTML = '';
+  } catch (e) {
+    result.textContent = 'Error connecting to AI. Please try again.';
+  }
+  btn.disabled = false; btn.textContent = '✨ Generate with AI';
+}
+
+// ==============================
+// QUIZ
+// ==============================
+const QUIZ_QUESTIONS = [
+  { q: 'Which activity excites you the most?', opts: ['Building apps or solving coding problems', 'Drawing, designing, or creating visuals', 'Helping people, advising, or teaching', 'Analyzing data, research, or experiments'] },
+  { q: 'In a group project, you naturally become the…', opts: ['Technologist who builds the solution', 'Creative who designs the presentation', 'Leader who coordinates the team', 'Analyst who researches and plans'] },
+  { q: 'Which subject do you enjoy most?', opts: ['Maths & Computer Science', 'Arts, Humanities, or Languages', 'Biology or Social Science', 'Physics, Chemistry, or Economics'] },
+  { q: 'Your dream work environment is…', opts: ['A tech startup or innovation lab', 'A creative studio or agency', 'A hospital, school, or social org', 'A research center or consultancy'] },
+  { q: 'How do you prefer to solve problems?', opts: ['Writing code or building systems', 'Creative thinking and storytelling', 'Talking to people and collaborating', 'Gathering data and analyzing it logically'] },
+  { q: 'What motivates you most in a career?', opts: ['Creating innovative tech products', 'Expressing creativity and aesthetics', 'Making a positive social impact', 'Discovering knowledge and insights'] },
+  { q: 'Which skill do you want to develop most?', opts: ['Programming and technical skills', 'Design and communication skills', 'Leadership and emotional intelligence', 'Research and analytical thinking'] },
+  { q: 'If you had to choose one, your career goal is to…', opts: ['Build the next big tech product', 'Create something visually inspiring', 'Change lives through service', 'Understand the world through science'] },
+];
+
+const QUIZ_RESULTS = [
+  { emoji: '💻', title: 'The Tech Innovator', desc: 'You love building, problem-solving, and technology. You are wired for careers in software engineering, AI, data science, and product development.', careers: [{ icon: '⚙️', name: 'Software Engineer', field: 'Technology' }, { icon: '🤖', name: 'AI/ML Engineer', field: 'Technology' }, { icon: '📊', name: 'Data Scientist', field: 'Analytics' }, { icon: '📱', name: 'Product Manager', field: 'Tech/Business' }] },
+  { emoji: '🎨', title: 'The Creative Visionary', desc: 'You think visually and love expressing ideas through design and storytelling. Careers in UX, graphic design, media, and creative direction are your playground.', careers: [{ icon: '🎨', name: 'UX/UI Designer', field: 'Design' }, { icon: '🖼️', name: 'Graphic Designer', field: 'Creative' }, { icon: '🎬', name: 'Creative Director', field: 'Media' }, { icon: '📸', name: 'Brand Strategist', field: 'Marketing' }] },
+  { emoji: '🌍', title: 'The Human-Centered Leader', desc: 'You are driven by empathy and impact. You thrive in roles where you connect with people and create change — education, counseling, healthcare, and leadership.', careers: [{ icon: '👩‍⚕️', name: 'Doctor / Counselor', field: 'Healthcare' }, { icon: '👩‍🏫', name: 'Educator', field: 'Education' }, { icon: '🤝', name: 'HR Manager', field: 'Business' }, { icon: '🏛️', name: 'Policy Analyst', field: 'Government' }] },
+  { emoji: '🔬', title: 'The Analytical Thinker', desc: 'You are logical, curious, and love deep research. Science, engineering, finance, and consulting are fields where your mind shines brightest.', careers: [{ icon: '🔭', name: 'Research Scientist', field: 'Science' }, { icon: '📈', name: 'Financial Analyst', field: 'Finance' }, { icon: '🔧', name: 'Civil Engineer', field: 'Engineering' }, { icon: '💡', name: 'Business Consultant', field: 'Strategy' }] },
+];
+
+let quizAnswers = [], currentQ = 0;
+
+function startQuiz() {
+  quizAnswers = new Array(QUIZ_QUESTIONS.length).fill(null);
+  currentQ = 0;
+  document.getElementById('quizIntro').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'none';
+  document.getElementById('quizContent').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUIZ_QUESTIONS[currentQ];
+  document.getElementById('quizQNum').textContent = `Question ${currentQ + 1} of ${QUIZ_QUESTIONS.length}`;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizProgressBar').style.width = ((currentQ / QUIZ_QUESTIONS.length) * 100) + '%';
+  const opts = document.getElementById('quizOptions');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option' + (quizAnswers[currentQ] === i ? ' selected' : '');
+    btn.textContent = o;
+    btn.onclick = () => {
+      quizAnswers[currentQ] = i;
+      document.querySelectorAll('.quiz-option').forEach((b, bi) => b.classList.toggle('selected', bi === i));
+    };
+    opts.appendChild(btn);
+  });
+  document.getElementById('prevQBtn').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  document.getElementById('nextQBtn').textContent = currentQ === QUIZ_QUESTIONS.length - 1 ? 'See My Results ✨' : 'Next →';
+}
+
+function nextQ() {
+  if (quizAnswers[currentQ] === null) { showToast('Please select an answer first!'); return; }
+  if (currentQ < QUIZ_QUESTIONS.length - 1) { currentQ++; renderQuestion(); }
+  else { showResult(); }
+}
+function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+function retakeQuiz() {
+  document.getElementById('quizResult').style.display = 'none';
+  document.getElementById('quizIntro').style.display = 'block';
+}
+
+function showResult() {
+  // Count which type was picked most
+  const counts = [0, 0, 0, 0];
+  quizAnswers.forEach(a => { if (a !== null) counts[a]++; });
+  const topType = counts.indexOf(Math.max(...counts));
+  const result = QUIZ_RESULTS[topType];
+
+  document.getElementById('quizContent').style.display = 'none';
+  document.getElementById('quizResult').style.display = 'block';
+  document.getElementById('resultEmoji').textContent = result.emoji;
+  document.getElementById('resultTitle').textContent = result.title;
+  document.getElementById('resultDesc').textContent = result.desc;
+  document.getElementById('quizProgressBar').style.width = '100%';
+
+  const careersEl = document.getElementById('resultCareers');
+  careersEl.innerHTML = '';
+  result.careers.forEach(c => {
+    careersEl.innerHTML += `
+      <div class="result-career-card">
+        <div class="result-career-icon">${c.icon}</div>
+        <div class="result-career-name">${c.name}</div>
+        <div class="result-career-field">${c.field}</div>
+      </div>`;
+  });
+  showToast('Quiz complete! 🎉 Your career profile is ready.');
+}
+
+// ==============================
+// EDUCATOR TOOLS
+// ==============================
+function setEduTool(tool) {
+  document.getElementById('eduToolSelect').value = tool;
+  const placeholders = {
+    lesson: "e.g. 'A 45-minute lesson plan for Grade 11 students about careers in Artificial Intelligence'",
+    assessment: "e.g. 'A 10-question quiz on career readiness for engineering students'",
+    report: "e.g. 'A career readiness report for a student interested in medicine who is strong in biology but weak in communication'",
+    advice: "e.g. 'A counseling script for a student who is confused between pursuing engineering vs commerce'"
+  };
+  document.getElementById('eduInput').placeholder = placeholders[tool] || 'Describe what you need…';
+  showToast('Tool selected: ' + document.getElementById('eduToolSelect').options[document.getElementById('eduToolSelect').selectedIndex].text);
+}
+
+async function generateEduContent() {
+  const tool = document.getElementById('eduToolSelect').value;
+  const input = document.getElementById('eduInput').value.trim();
+  if (!input) { showToast('Please describe what you need!'); return; }
+
+  const btn = document.getElementById('eduGenBtn');
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+
+  const prompts = {
+    lesson: `Create a detailed career-oriented lesson plan for educators. Context: "${input}". Include: Learning objectives, materials needed, activity breakdown (intro, main activity, conclusion), discussion questions, and homework/follow-up.`,
+    assessment: `Create an assessment for students. Context: "${input}". Include: Clear questions (MCQ and short answer), answer key, and grading rubric.`,
+    report: `Write a personalized career-readiness report for a student. Context: "${input}". Include: Strengths, areas for improvement, recommended career paths, suggested next steps, and resources.`,
+    advice: `Write a counseling script for an educator or school counselor. Context: "${input}". Include: Opening, key questions to ask the student, advice points, and a positive closing that empowers the student.`
+  };
+
+  const resultEl = document.getElementById('eduResult');
+  resultEl.className = 'edu-result visible';
+  resultEl.textContent = 'Generating with AI…';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompts[tool] }]
+      })
+    });
+    const data = await res.json();
+    resultEl.textContent = data.content?.find(b => b.type === 'text')?.text || 'Could not generate. Try again.';
+  } catch (e) {
+    resultEl.textContent = 'Error connecting to AI. Please try again.';
+  }
+  btn.disabled = false; btn.textContent = '✨ Generate';
+}
+
+// ==============================
+// NOTES
+// ==============================
+function loadNotes() {
+  notes = JSON.parse(localStorage.getItem('studius-notes-' + (currentUser || 'guest')) || '[]');
+  renderNotes();
+  updateStats();
+}
+
+function saveNote() {
+  const title = document.getElementById('noteTitleInput').value.trim();
+  const text = document.getElementById('noteArea').value.trim();
+  if (!text) { showToast('Write something first! ✏️'); return; }
+  notes.unshift({ id: Date.now(), title: title || 'Untitled Note', text, date: new Date().toLocaleDateString() });
+  localStorage.setItem('studius-notes-' + (currentUser || 'guest'), JSON.stringify(notes));
+  document.getElementById('noteTitleInput').value = '';
+  document.getElementById('noteArea').value = '';
+  renderNotes();
+  updateStats();
+  showToast('Note saved! 💾');
+}
+
+function deleteNote(id) {
+  notes = notes.filter(n => n.id !== id);
+  localStorage.setItem('studius-notes-' + (currentUser || 'guest'), JSON.stringify(notes));
+  renderNotes();
+  updateStats();
+  showToast('Note deleted.');
+}
+
+function loadNote(id) {
+  const n = notes.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('noteTitleInput').value = n.title;
+  document.getElementById('noteArea').value = n.text;
+}
+
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  list.innerHTML = '';
+  if (notes.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:16px">No notes yet. Start writing above!</div>';
+    return;
+  }
+  notes.forEach(n => {
+    list.innerHTML += `
+      <div class="note-item">
+        <div class="note-item-body" onclick="loadNote(${n.id})">
+          <div class="note-item-title">${n.title}</div>
+          <div class="note-item-preview">${n.text.substring(0, 60)}${n.text.length > 60 ? '…' : ''}</div>
+          <div class="note-item-date">${n.date}</div>
+        </div>
+        <button class="note-del" onclick="deleteNote(${n.id})" title="Delete">🗑️</button>
+      </div>`;
+  });
+}
+
+// ==============================
+// TOAST
+// ==============================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ==============================
+// TYPEWRITER TAGLINE
+// ==============================
+(function(){
+  const phrases = [
+    'Technology 💻',
+    'Design 🎨',
+    'Medicine 🏥',
+    'Engineering 🔧',
+    'Business 💼',
+    'Science 🔬',
+    'Finance 💰',
+    'Law ⚖️',
+    'Education 🎓',
+    'Media 📡',
+  ];
+  let pi = 0, ci = 0, deleting = false;
+  const el = document.getElementById('taglineDynamic');
+  if (!el) return;
+  function tick() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      el.textContent = phrase.slice(0, ++ci);
+      if (ci === phrase.length) { deleting = true; setTimeout(tick, 1600); return; }
+    } else {
+      el.textContent = phrase.slice(0, --ci);
+      if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; setTimeout(tick, 350); return; }
+    }
+    setTimeout(tick, deleting ? 45 : 70);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
